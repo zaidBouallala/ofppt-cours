@@ -1,15 +1,20 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { educationQueries } from "../api/queries";
 import ThemeToggle from "../components/ui/ThemeToggle";
 import LevelCard from "../components/ui/LevelCard";
 import BrandLogo from "../components/ui/BrandLogo";
 import SEO from "../components/common/SEO";
+import { ErrorState } from "../components/ui/States";
+import LoadingSpinner from "../components/ui/LoadingSpinner";
 
 export default function EducationLevelPage() {
   const navigate = useNavigate();
-  const { data: years } = useSuspenseQuery(educationQueries.years());
+  const { data: years, isLoading, isError, error, refetch } = useQuery({
+    ...educationQueries.years(),
+    retry: 1,
+  });
 
   /**
    * Associe chaque niveau à un label de catégorie, une couleur,
@@ -49,6 +54,36 @@ export default function EducationLevelPage() {
       color: "slate",
     };
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-[var(--bg-page)]">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
+  if (isError) {
+    const isNetworkError = error?.message?.toLowerCase().includes('network') ||
+      error?.code === 'ECONNREFUSED' ||
+      !navigator.onLine;
+    return (
+      <div className="relative min-h-screen w-full flex items-center justify-center bg-[var(--bg-page)] p-6">
+        <ThemeToggle />
+        <div className="w-full max-w-lg">
+          <ErrorState
+            title={isNetworkError ? "Serveur inaccessible" : "Erreur de chargement"}
+            message={
+              isNetworkError
+                ? "Impossible de contacter le serveur. Vérifiez votre connexion internet et réessayez."
+                : (error?.message || "Nous n'avons pas pu charger les niveaux. Veuillez réessayer.")
+            }
+            onRetry={refetch}
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative min-h-screen w-full transition-colors duration-300 bg-[var(--bg-page)] text-[var(--text-primary)] font-sans">
