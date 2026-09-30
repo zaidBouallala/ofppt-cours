@@ -21,7 +21,9 @@ export class ApiError extends Error {
  * Axios client instance configured for the education API
  */
 const apiClient = axios.create({
-    baseURL: 'https://podo.b1.ma/api/public',
+    // In development, Vite's proxy forwards /api/public → https://podo.b1.ma/api/public
+    // In production, set VITE_API_URL to the full backend URL (e.g. https://podo.b1.ma/api/public)
+    baseURL: import.meta.env.VITE_API_URL || '/api/public',
     timeout: 10000,
     headers: {
         'Content-Type': 'application/json',

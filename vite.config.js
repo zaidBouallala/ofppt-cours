@@ -9,6 +9,14 @@ export default defineConfig({
     host: '0.0.0.0', // Allow external connections (needed for TestSprite)
     port: 5173,
     strictPort: true,
+    proxy: {
+      '/api/public': {
+        target: 'https://podo.b1.ma',
+        changeOrigin: true,
+        secure: true,
+        rewrite: (path) => path, // keep path as-is
+      },
+    },
   },
   plugins: [
     react(),
