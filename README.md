@@ -39,7 +39,7 @@ A modern, high-performance educational platform designed for **OFPPT** trainees.
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/zaidbouallala-alb/ofppt-cours.git
+    git clone https://github.com/zaidbouallala/ofppt-cours.git
     cd ofppt-cours
     ```
 
